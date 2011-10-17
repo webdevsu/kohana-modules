@@ -1,0 +1,89 @@
+Модуль авторизации OAuth 2.0 Vkontakte для Kohana 3.2
+
+Установка
+
+cd /path/to/kohana
+cd modules
+git clone git@github.com:webdevsu/kohana-modules.git ./
+
+
+Подключение
+
+Открываем файл application/bootstrap.php и добовляем подключение нового модуля
+
+Kohana::modules(array(
+		...
+        'vk'        => MODPATH.'vk',        // OAuth 2.0 Vkontakte
+		...
+	));
+	
+Документация и Примеры использования
+
+Для начала заполним конфигурационный файл
+return array(
+    
+    'VK_APP_ID'             => 'APP ID', // ID приложения
+    
+    'VK_APP_SECRET'         => 'APP SECRET', // Защищенный ключ
+    
+    'REDIRECT_URI'          => 'http://kohana.local/login/vk/', // Ссылка куда будет переадрисовывать после авторизации, слеш в конце обязателен
+    
+    'DISPLAY'               => 'page', // page OR popup OR touch OR wap
+    
+    'SCOPE'                 => array( 
+            'notify', // Пользователь разрешил отправлять ему уведомления.
+            //'friends', // Доступ к друзьям. 
+            //'photos', // Доступ к фотографиям. 
+            //'audio', // Доступ к аудиозаписям. 
+            //'video', // Доступ к видеозаписям.
+            //'docs', // Доступ к документам.
+            //'notes', // Доступ заметкам пользователя. 
+            //'pages', // Доступ к wiki-страницам. 
+            //'wall', // Доступ к обычным и расширенным методам работы со стеной. 
+            //'groups', // Доступ к группам пользователя. 
+            //'ads', // Доступ к расширенным методам работы с рекламным API. 
+            //'offline' // Доступ к API в любое время со стороннего сервера. 
+    ), 
+    'VK_URI_AUTH'           => 'http://api.vk.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&display={DISPLAY}',
+    'VK_URI_ACCESS_TOKEN'   => 'https://api.vkontakte.ru/oauth/access_token?client_id={CLIENT_ID}&client_secret={APP_SECRET}&code={CODE}',
+    'VK_URI_METHOD'         => 'https://api.vkontakte.ru/method/{METHOD_NAME}?{PARAMETERS}&access_token={ACCESS_TOKEN}',
+);
+Сначало пропишем в удобном для вас месте ссылку для перехода на авторизацию
+<a href="<?=Vk::instance()->get_link_login()?>">Vkontakte</a>
+Потом создаем контроллер и в нем метод в который будет переадрисовывать после перехода
+
+Допустим /application/clases/controller/login.php
+В нем метод 
+public function action_vk()
+{
+	$vk = Vk::instance();
+	$vk->login();
+}
+Ну и можно для сброса авторизации 
+public function action_vk_logout()
+{
+	$vk = Vk::instance();
+	$vk->logout();
+}
+
+
+public funcion get_link_login();
+Этот метод формирует URI для перехода к авторизации
+
+protected function get_access_token();
+Этот метод получает ACCESS TOKEN для выполнения дальнейших запросов к API
+
+public function logged_in();
+Этот метод проверяет авторизован пользователь или нет
+
+public function get_user();
+Этот метод возвращает ACCESS TOKEN и USER ID пользователя в контакте
+
+public function login();
+Этот метод авторизовывает пользователя
+
+public function logout();
+Этот метод "убивает" авторизацию пользователя
+
+public function api($method = FALSE, $parametrs = array());
+Этот метод служит для вызова функций API и передачи им параметров, возвращает результат выполнения
