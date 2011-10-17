@@ -20,7 +20,7 @@ Kohana::modules(array(
 Документация и Примеры использования
 
 Для начала заполним конфигурационный файл
-<code>
+
 return array(
     
     'VK_APP_ID'             => 'APP ID', // ID приложения
@@ -49,55 +49,42 @@ return array(
     'VK_URI_ACCESS_TOKEN'   => 'https://api.vkontakte.ru/oauth/access_token?client_id={CLIENT_ID}&client_secret={APP_SECRET}&code={CODE}',
     'VK_URI_METHOD'         => 'https://api.vkontakte.ru/method/{METHOD_NAME}?{PARAMETERS}&access_token={ACCESS_TOKEN}',
 );
-</code>
 Сначало пропишем в удобном для вас месте ссылку для перехода на авторизацию
-<code>
 <a href="<?=Vk::instance()->get_link_login()?>">Vkontakte</a>
-</code>
 Потом создаем контроллер и в нем метод в который будет переадрисовывать после перехода
 
 Допустим /application/clases/controller/login.php
 В нем метод 
-<code>
 public function action_vk()
 {
 	$vk = Vk::instance();
 	$vk->login();
 }
-</code>
 Ну и можно для сброса авторизации 
-<code>
 public function action_vk_logout()
 {
 	$vk = Vk::instance();
 	$vk->logout();
 }
-</code>
-<code>
+
+
 public funcion get_link_login();
-</code>
 Этот метод формирует URI для перехода к авторизации
-<code>
+
 protected function get_access_token();
-</code>
 Этот метод получает ACCESS TOKEN для выполнения дальнейших запросов к API
-<code>
+
 public function logged_in();
-</code>
 Этот метод проверяет авторизован пользователь или нет
-<code>
+
 public function get_user();
-</code>
 Этот метод возвращает ACCESS TOKEN и USER ID пользователя в контакте
-<code>
+
 public function login();
-</code>
 Этот метод авторизовывает пользователя
-<code>
+
 public function logout();
-</code>
 Этот метод "убивает" авторизацию пользователя
-<code>
+
 public function api($method = FALSE, $parametrs = array());
-</code>
 Этот метод служит для вызова функций API и передачи им параметров, возвращает результат выполнения
